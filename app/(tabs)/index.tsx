@@ -5,13 +5,14 @@ import { useRouter } from "expo-router";
 import { routes } from "@/constants/routes";
 import use_fetch from "@/services/use-fetch";
 import { fetch_movies, sort_bys } from "@/services/api";
+import MovieCard from "@/components/MovieCard";
+import SearchBar from "@/components/SearchBar";
 
 export default function Index() {
     const router = useRouter();
     const movies_states = use_fetch(
         () => fetch_movies({ query : '', sort_by : sort_bys.popularity_desc }) 
     )
-    console.log(movies_states.data);
     return (
         <View className="flex-1 bg-primary" >
             <Image className="absolute w-full z-0" source={images.bg} />
@@ -30,8 +31,18 @@ export default function Index() {
                         <FlatList
                             data={movies_states.data}
                             renderItem={({ item }) => (
-                                <Text className="text-white">{ item.title }</Text>
+                                <MovieCard movie={item} />
                             )}
+                            keyExtractor={ ( item ) => item.id }
+                            numColumns={3}
+                            columnWrapperStyle={{
+                                justifyContent : "flex-start", 
+                                gap : 20, 
+                                paddingRight : 5, 
+                                marginBottom : 10
+                            }}
+                            className="mt-2 pb-32"
+                            scrollEnabled={ false }
                         />
                     </View>
                 )}
@@ -41,27 +52,3 @@ export default function Index() {
 }
 
 
-function SearchBar({ handler, placeholder } : IProps) {
-    return (
-        <View className="flex-row items-center bg-dark-200 rounded-full px-5 py-4">
-            <Image source={icons.search} className="size-5" resizeMode="contain" tintColor="#ab8bff" />
-            <TextInput
-                onPress={handle_on_press}
-                placeholder={ placeholder || 'Search' }
-                value=""
-                onChangeText={() => { }}
-                placeholderTextColor="#a8b5db"
-                className="flex-1 ml-2 text-white"
-            />
-        </View>
-    )
-    function handle_on_press() {
-        if(handler) handler();
-        else console.log('no handler props provided');
-    }
-}
-
-interface IProps {
-    handler? : () => void, 
-    placeholder? : string
-}
