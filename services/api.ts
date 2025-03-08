@@ -9,7 +9,8 @@ export const tmdb_api_config = {
 
 export async function fetch_movies (queries : IMovieSearchQueries) {
     try {
-        const end_point = `${tmdb_api_config.base_url}/discover/movie?${object_to_search_queries(queries)}`;
+        const base = `${tmdb_api_config.base_url}${queries?.query ? '/search/movie' : '/discover/movie'}`
+        const end_point = `${base}?${object_to_search_queries(queries)}`;
         console.log('perfect endpoint', end_point);
         const response = await fetch(end_point, {
             method : "GET", 
